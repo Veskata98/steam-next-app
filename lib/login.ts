@@ -39,7 +39,7 @@ const logInSteam = async () => {
             console.log('Successful login!');
 
             await browser.close();
-            return;
+            return cookies;
         } catch (error) {
             console.log(error);
             console.log('Will try to log in again!');

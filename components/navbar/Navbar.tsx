@@ -30,10 +30,6 @@ export default function Navbar() {
             });
     };
 
-    const handleRefresh = () => {
-        window.location.reload();
-    };
-
     return (
         <nav className="w-full h-24">
             {loading && (
@@ -57,15 +53,6 @@ export default function Navbar() {
                             <LogIn />
                         </Button>
                     )}
-
-                    <Button
-                        onClick={handleRefresh}
-                        className="border-none outline-none bg-orange-400 text-lg 
-                        rounded-full w-14 h-14 hover:bg-orange-400/90
-                        hover:rotate-90 transition text-white"
-                    >
-                        <RefreshCwIcon />
-                    </Button>
                 </div>
             </div>
         </nav>

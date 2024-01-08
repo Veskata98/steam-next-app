@@ -1,6 +1,7 @@
 type Item = {
     id: string;
     name: string;
-    price: string;
+    price: number;
     link: string;
+    icon?: string;
 };

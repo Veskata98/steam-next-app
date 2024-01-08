@@ -1,16 +1,25 @@
 'use client';
 
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-interface IAuthContext {
+type TAuthContext = {
     isLoggedIn: boolean;
     successLogin: () => void;
-}
+};
 
-export const AuthContext = createContext<IAuthContext>({ isLoggedIn: false, successLogin: () => {} });
+export const AuthContext = createContext<TAuthContext>({ isLoggedIn: false, successLogin: () => {} });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const cookies = document.cookie;
+
+        if (cookies.length) {
+            setIsLoggedIn(true);
+        } else {
+        }
+    }, []);
 
     const successLogin = async () => {
         setIsLoggedIn(true);
