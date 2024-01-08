@@ -1,14 +1,17 @@
-import type * as puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer';
 
 import * as SteamTotp from 'steam-totp';
 
-import { setCookie } from '@/lib/cookie.js';
-import { pause } from '@/lib/utils.js';
+import pause from '@/lib/pause';
+import { setCookie } from '@/lib/cookie';
 
-const login = async (page: puppeteer.Page) => {
+const logInSteam = async () => {
     while (true) {
         try {
             const code = SteamTotp.generateAuthCode(process.env.SECRET_KEY as string);
+
+            const browser = await puppeteer.launch({ headless: 'new', args: ['--lang=en'] });
+            const page = await browser.newPage();
 
             await page.goto('https://store.steampowered.com/login/');
             await page.waitForSelector('button[type="submit"]');
@@ -34,6 +37,8 @@ const login = async (page: puppeteer.Page) => {
             await setCookie(cookies);
 
             console.log('Successful login!');
+
+            await browser.close();
             return;
         } catch (error) {
             console.log(error);
@@ -43,4 +48,4 @@ const login = async (page: puppeteer.Page) => {
     }
 };
 
-export default login;
+export default logInSteam;
