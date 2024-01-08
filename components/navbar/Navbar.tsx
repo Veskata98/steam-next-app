@@ -11,7 +11,7 @@ export default function Navbar() {
     return (
         <nav className="w-full h-24">
             <div className="h-full flex justify-between items-center">
-                <h2 className="text-3xl font-bold">Steam Crawler</h2>
+                <h2 className="text-3xl font-bold">Crawler</h2>
                 <Button
                     onClick={handleRefresh}
                     className="border-none outline-none bg-orange-400 text-lg 

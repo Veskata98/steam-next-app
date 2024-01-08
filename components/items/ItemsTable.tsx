@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import axios from 'axios';
 
-import { ItemRow } from './ItemRow';
+import { ItemRow } from '@/components/items/ItemRow';
 
 const ItemsTable = () => {
     const [items, setItems] = useState<Item[]>([]);
@@ -27,7 +27,7 @@ const ItemsTable = () => {
     }
 
     return (
-        <div className="bg-neutral-700 rounded-md p-4 flex flex-col gap-4 mt-2">
+        <div className="bg-neutral-700 rounded-md p-4 flex flex-col gap-4 mt-2 pb-8">
             {items.map((item) => (
                 <ItemRow key={item.id} item={item} />
             ))}
