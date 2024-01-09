@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { useAuth } from '@/hooks/useAuth';
 
 import axios from 'axios';
 
-import { ItemRow } from '@/components/items/ItemRow';
-import { Button } from '../ui/button';
 import { Pause, Power } from 'lucide-react';
 
-const ItemsTable = () => {
+import { ItemRow } from '@/components/items/ItemRow';
+import { Button } from '@/components/ui/button';
+import { Loading } from '@/components/Loading';
+
+const ItemTable = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = useState(false);
     const [startGettingData, setStartGettingData] = useState(false);
@@ -18,22 +19,18 @@ const ItemsTable = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                setLoading(true);
-                const res = await axios.get('/api/server');
-                setItems(res.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                setLoading(false);
-            }
+            axios
+                .get('/api/server')
+                .then((res) => setItems(res.data))
+                .catch((e) => console.log(e))
+                .finally(() => setLoading(false));
         };
 
         const intervalId =
             isLoggedIn && startGettingData
                 ? setInterval(() => {
                       fetchData();
-                  }, 10000)
+                  }, 5000)
                 : null;
 
         return () => {
@@ -55,14 +52,7 @@ const ItemsTable = () => {
     }
 
     if (loading) {
-        return (
-            <p
-                className="bg-neutral-700 rounded-md mx-auto p-6 
-                w-full text-center text-lg mt-2"
-            >
-                Loading...
-            </p>
-        );
+        return <Loading />;
     }
 
     const runCrawler = () => {
@@ -74,7 +64,7 @@ const ItemsTable = () => {
             <div className="flex justify-center">
                 <Button
                     onClick={runCrawler}
-                    className="border-none outline-none bg-orange-400 text-lg 
+                    className="border-none outline-none bg-orange-400 text-lg absolute top-6
                         rounded-full w-14 h-14 hover:bg-orange-400/90 text-white"
                 >
                     {startGettingData ? <Pause /> : <Power />}
@@ -89,4 +79,4 @@ const ItemsTable = () => {
     );
 };
 
-export default ItemsTable;
+export default ItemTable;

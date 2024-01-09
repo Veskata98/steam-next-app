@@ -17,12 +17,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (cookies.length) {
             setIsLoggedIn(true);
-        } else {
         }
     }, []);
 
     const successLogin = async () => {
         setIsLoggedIn(true);
+        console.log('Successful Login');
     };
 
     return <AuthContext.Provider value={{ isLoggedIn, successLogin }}>{children}</AuthContext.Provider>;

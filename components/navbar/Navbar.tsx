@@ -4,31 +4,14 @@ import { useState } from 'react';
 
 import { useAuth } from '@/hooks/useAuth';
 
-import { LogIn, RefreshCwIcon } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSteam } from '@fortawesome/free-brands-svg-icons';
 
-import { Button } from '@/components/ui/button';
+import { LoginButton } from '@/components/LoginButton';
 
 export default function Navbar() {
     const [loading, setLoading] = useState(false);
-    const { isLoggedIn, successLogin } = useAuth();
-
-    const handleLogin = () => {
-        setLoading(true);
-
-        fetch('/api/login')
-            .then(() => {
-                successLogin();
-                console.log('Successful login');
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
+    const { isLoggedIn } = useAuth();
 
     return (
         <nav className="w-full h-24">
@@ -42,17 +25,7 @@ export default function Navbar() {
                     <FontAwesomeIcon icon={faSteam} /> Crawler
                 </h2>
                 <div className="flex gap-2 items-center">
-                    {isLoggedIn ? (
-                        <p className="text-green-500">Logged In</p>
-                    ) : (
-                        <Button
-                            onClick={handleLogin}
-                            className="border-none outline-none bg-orange-400 text-lg 
-                            rounded-full w-14 h-14 hover:bg-orange-400/90 text-white"
-                        >
-                            <LogIn />
-                        </Button>
-                    )}
+                    {isLoggedIn ? <p className="text-green-500">Logged In</p> : <LoginButton setLoading={setLoading} />}
                 </div>
             </div>
         </nav>

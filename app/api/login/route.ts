@@ -1,5 +1,6 @@
-import logInSteam from '@/lib/login';
 import { NextResponse } from 'next/server';
+
+import logInSteam from '@/app/api/login/logInSteam';
 
 export async function GET() {
     const cookies = await logInSteam();
