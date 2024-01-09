@@ -4,12 +4,14 @@ import * as fs from 'fs/promises';
 import axios from 'axios';
 
 import { getCookie } from '@/lib/cookie';
-import { getWear, replaceWear } from '@/lib/wear';
+import { getWear } from '@/lib/wear';
 
 const STEAM_RECENT_ITEMS_URL = 'https://steamcommunity.com/market/recent?country=BG&language=english&currency=3';
 
 export async function GET() {
     const result: Item[] = [];
+    let newArr: Item[] = [];
+    let uniqueArray: Item[] = [];
 
     const cookie = await getCookie();
 
@@ -42,14 +44,31 @@ export async function GET() {
                 continue;
             }
 
-            // const haveNametag = 'fraudwarnings' in asset[1];
+            const haveNametag = 'fraudwarnings' in asset[1];
 
-            // const stickerString = asset[1].descriptions[asset[1].descriptions.length - 1].value;
+            const stickerString = asset[1]?.descriptions[asset[1]?.descriptions.length - 1].value.trim();
 
-            // const match = stickerString.match(/<br>Sticker:\s*(.*?)<\/center><\/div>/);
-            // const stickers = match && match[1].trim();
+            if (!stickerString || !stickerString.length) {
+                return NextResponse.json(null);
+            }
 
-            const marketURL = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(itemName)}`;
+            const matchStickerNames = stickerString?.match(/<br>Sticker:\s*(.*?)<\/center><\/div>/);
+            const stickerNames = matchStickerNames && matchStickerNames[1].trim();
+
+            const stickersLinks = stickerString?.match(/src="(.*?)">/gim);
+
+            const stickerNamesArray = stickerNames.split(', ');
+            const stickerLinksArray = stickersLinks.map((s: string) => s.replace('src="', '').replace('">', ''));
+
+            const stickers: Sticker[] = [];
+
+            for (let i = 0; i < stickerNamesArray.length; i++) {
+                stickers.push({ name: stickerNamesArray[i], link: stickerLinksArray[i] });
+            }
+
+            const marketURL = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(
+                itemName
+            )}?filter=${encodeURIComponent('"' + stickerNames + '"')}`;
 
             result.push({
                 id: assetId,
@@ -58,20 +77,21 @@ export async function GET() {
                 link: marketURL,
                 icon: itemIcon,
                 wear: getWear(itemName),
+                haveNametag,
+                stickers,
             });
         }
 
-        let newArr = [...result, ...oldItems];
+        newArr = [...result, ...oldItems];
 
-        if (newArr.length > 100) {
-            newArr = newArr.slice(0, 99);
-        }
+        const jsonObject = newArr.map((item) => JSON.stringify(item));
+        const uniqueSet = new Set(jsonObject);
+        uniqueArray = Array.from(uniqueSet).map((item) => JSON.parse(item));
 
-        await fs.writeFile('./data/items.json', JSON.stringify(newArr));
-        result.push(...oldItems);
+        await fs.writeFile('./data/items.json', JSON.stringify(uniqueArray));
     } catch (error) {
-        console.log(error);
+        return NextResponse.json(null);
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json(uniqueArray);
 }

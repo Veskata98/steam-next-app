@@ -24,8 +24,16 @@ export const ItemRow = ({ item }: ItemProps) => {
                 <div className="flex gap-4 items-center justify-center">
                     {item.icon && <Image alt={item.name} src={item.icon} width={72} height={72} />}
                     <p className={wearColor[item.wear]}>{item.name}</p>
+                    {item.haveNametag && <p className="text-red-600 uppercase">Nametag</p>}
                 </div>
-                <p>{item.price} €</p>
+                <div className="flex items-center">
+                    <div className="flex mr-10">
+                        {item.stickers?.map((sticker) => (
+                            <Image key={sticker.name} alt={sticker.name} src={sticker.link} width={48} height={48} />
+                        ))}
+                    </div>
+                    <p>{item.price} €</p>
+                </div>
             </div>
         </Link>
     );

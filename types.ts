@@ -1,5 +1,10 @@
 type Wear = 'FN' | 'MW' | 'FT' | 'WW' | 'BS';
 
+type Sticker = {
+    name: string;
+    link: string;
+};
+
 type Item = {
     id: string;
     name: string;
@@ -7,4 +12,6 @@ type Item = {
     link: string;
     icon?: string;
     wear: Wear;
+    haveNametag?: boolean;
+    stickers?: Sticker[];
 };

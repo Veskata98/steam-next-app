@@ -35,7 +35,7 @@ const ItemTable = () => {
             isLoggedIn && startGettingData
                 ? setInterval(() => {
                       fetchData();
-                  }, 5000)
+                  }, 3000)
                 : null;
 
         return () => {
@@ -76,7 +76,10 @@ const ItemTable = () => {
                 </Button>
             </div>
             <div
-                className={cn('bg-neutral-700 rounded-md p-4 flex flex-col gap-4 mt-2', !items.length ? 'hidden' : '')}
+                className={cn(
+                    'bg-neutral-700 rounded-md p-4 flex flex-col gap-4 mt-2 mb-8',
+                    !items.length ? 'hidden' : ''
+                )}
             >
                 {items.map((item) => (
                     <ItemRow key={item.id} item={item} />
