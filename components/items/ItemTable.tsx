@@ -10,6 +10,7 @@ import { Pause, Power } from 'lucide-react';
 import { ItemRow } from '@/components/items/ItemRow';
 import { Button } from '@/components/ui/button';
 import { Loading } from '@/components/Loading';
+import { cn } from '@/lib/utils';
 
 const ItemTable = () => {
     const [items, setItems] = useState<Item[]>([]);
@@ -70,7 +71,9 @@ const ItemTable = () => {
                     {startGettingData ? <Pause /> : <Power />}
                 </Button>
             </div>
-            <div className="bg-neutral-700 rounded-md p-4 flex flex-col gap-4 mt-2 pb-8">
+            <div
+                className={cn('bg-neutral-700 rounded-md p-4 flex flex-col gap-4 mt-2', !items.length ? 'hidden' : '')}
+            >
                 {items.map((item) => (
                     <ItemRow key={item.id} item={item} />
                 ))}

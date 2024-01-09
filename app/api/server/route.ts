@@ -1,16 +1,11 @@
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCookie } from '@/lib/cookie';
+import { getWear, replaceWear } from '@/lib/wear';
 
 const STEAM_RECENT_ITEMS_URL = 'https://steamcommunity.com/market/recent?country=BG&language=english&currency=3';
 
 export async function GET() {
-    // const obj = [
-    //     { id: '123', name: 'Ak-47', price: '45', link: '/' },
-    //     { id: '124', name: 'Ak-47', price: '45', link: '/' },
-    //     { id: '125', name: 'Ak-47', price: '45', link: '/' },
-    // ];
-
     const result: Item[] = [];
 
     const cookie = await getCookie();
@@ -26,7 +21,7 @@ export async function GET() {
 
         for (let asset of assets.filter((asset: any) => asset[1].commodity === 0)) {
             const assetId = asset[1].id;
-            const itemName = asset[1].name;
+            const itemName: string = asset[1].market_name;
             const inspectLink = asset[1].actions[0].link;
 
             const itemData = listingInfo.find((x: any) => x[1].asset.id === assetId);
@@ -51,8 +46,16 @@ export async function GET() {
 
             const marketURL = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(itemName)}`;
 
-            console.log(assetId, inspectLink, fullPrice);
-            result.push({ id: assetId, name: itemName, price: fullPrice, link: marketURL, icon: itemIcon });
+            const itemNameWithReplacedWear = replaceWear(itemName);
+
+            result.push({
+                id: assetId,
+                name: itemNameWithReplacedWear,
+                price: fullPrice,
+                link: marketURL,
+                icon: itemIcon,
+                wear: getWear(itemName),
+            });
         }
     } catch (error) {
         console.log(error);
