@@ -1,5 +1,8 @@
+import { NextResponse } from 'next/server';
+
+import * as fs from 'fs/promises';
 import axios from 'axios';
-import { NextRequest, NextResponse } from 'next/server';
+
 import { getCookie } from '@/lib/cookie';
 import { getWear, replaceWear } from '@/lib/wear';
 
@@ -11,6 +14,8 @@ export async function GET() {
     const cookie = await getCookie();
 
     try {
+        const oldItems = JSON.parse(await fs.readFile('./data/items.json', { encoding: 'utf-8' }));
+
         const res = await axios.get(STEAM_RECENT_ITEMS_URL, {
             headers: { Cookie: JSON.parse(cookie) },
         });
@@ -46,17 +51,24 @@ export async function GET() {
 
             const marketURL = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(itemName)}`;
 
-            const itemNameWithReplacedWear = replaceWear(itemName);
-
             result.push({
                 id: assetId,
-                name: itemNameWithReplacedWear,
+                name: itemName,
                 price: fullPrice,
                 link: marketURL,
                 icon: itemIcon,
                 wear: getWear(itemName),
             });
         }
+
+        let newArr = [...result, ...oldItems];
+
+        if (newArr.length > 100) {
+            newArr = newArr.slice(0, 99);
+        }
+
+        await fs.writeFile('./data/items.json', JSON.stringify(newArr));
+        result.push(...oldItems);
     } catch (error) {
         console.log(error);
     }

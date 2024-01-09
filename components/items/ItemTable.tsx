@@ -22,7 +22,11 @@ const ItemTable = () => {
         const fetchData = async () => {
             axios
                 .get('/api/server')
-                .then((res) => setItems(res.data))
+                .then((res) => {
+                    if (res.data.length) {
+                        setItems(res.data);
+                    }
+                })
                 .catch((e) => console.log(e))
                 .finally(() => setLoading(false));
         };

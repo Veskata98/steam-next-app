@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import * as fs from 'fs/promises';
 
 import * as SteamTotp from 'steam-totp';
 
@@ -6,6 +7,8 @@ import pause from '@/lib/pause';
 import { setCookie } from '@/lib/cookie';
 
 const logInSteam = async () => {
+    await fs.writeFile('./data/items.json', []);
+
     while (true) {
         try {
             const code = SteamTotp.generateAuthCode(process.env.SECRET_KEY as string);
